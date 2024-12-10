@@ -6,7 +6,7 @@
 /*   By: agenisse <agenisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:25:32 by agenisse          #+#    #+#             */
-/*   Updated: 2024/12/10 18:00:49 by agenisse         ###   ########.fr       */
+/*   Updated: 2024/12/10 23:03:31 by agenisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,56 @@ char	*ft_read(int fd, char *buff)
 	return (buff);
 }
 
-char	*get_line(char *line, char *stock)
+char	*get_next(char *stock)
 {
-	int	i;
+	char	*temp;
+	int		i;
+	int		j;
 
 	i = 0;
 	while (stock[i] != '\n')
+		i++;
+	if (!stock[i])
+	{
+		free(stock);
+		return (NULL);
+	}
+	temp = ft_calloc(ft_strlen(stock) - i + 1, sizeof(char));
+	if (!temp)
+		return (NULL);
+	i++;
+	j = 0;
+	while (stock[i])
+		temp[j++] = stock[i++];
+	free(stock);
+	return (temp);
+}
+
+char	*get_line(char *stock)
+{
+	char	*line;
+	int	i;
+
+	i = 0;
+	if (!stock)
+		return (NULL);
+	while (stock[i] && stock[i] != '\n')
+		i++;
+	line = ft_calloc(i + 2, sizeof(char));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (stock[i] && stock[i] != '\n')
 	{
 		line[i] = stock[i];
 		i++;
 	}
-	line[i] = '\n';
+	if (stock[i] == '\n')
+	{
+		line[i] = stock[i];
+		i++;
+	}
+	line[i] = '\0';
 	return (line);
 }
 
@@ -52,19 +91,11 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!line)
-		return (NULL);
-	if (!stock)
-		stock = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!stock)
-		return (NULL);
-	stock = ft_read(fd, stock); // PROBLEME ICI 
 	stock = ft_read(fd, stock);
-	
 	if (!stock)
 		return (NULL);
-	line = get_line(line, stock);
+	line = get_line(stock);
+	stock = get_next(stock);
 	return (line);
 }
 
@@ -74,10 +105,12 @@ int	main(void)
 	char	*line;
 
 	fd = open("test.txt", O_RDONLY);
-	line = get_next_line(fd);
-	printf("%s", line);    // LA FAUT APPELER PLLUSIEURS FOIS TOCARD 
-	line = get_next_line(fd);
-	printf("%s", line);
-	free(line);
+	
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
 	return (0);
 }
