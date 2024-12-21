@@ -6,11 +6,12 @@
 /*   By: agenisse <agenisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:14:46 by agenisse          #+#    #+#             */
-/*   Updated: 2024/12/21 17:20:47 by agenisse         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:30:45 by agenisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
+#include <limits.h>
 
 static char	*ft_get_line(char *save)
 {
@@ -97,7 +98,7 @@ static char	*ft_read_and_save(int fd, char *save)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*save[4096];
+	static char	*save[OPEN_MAX];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -120,18 +121,34 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-// // #include <stdio.h>
-// // #include <fcntl.h>
-
-// // int main()
-// // {
-// // 	int fd = open("1char.txt", O_RDONLY);
-// // 	char *line;
-// // 	while ((line = get_next_line(fd)))
-// // 	{
-// // 		printf("%s\n", line);
-// // 		free(line);
-// // 	}
-// // 	close(fd);
-// // 	return (0);
+// #include <stdio.h>
+// #include <fcntl.h>
+// int main(void)
+// {
+// 	int	fd1; 
+// 	int fd2;
+// 	int fd3;
+// 	char *line;
+// 	int i;
+// 	i = 0;
+// 	fd1 = open("test1.txt", O_RDONLY);
+// 	fd2 = open("test2.txt", O_RDONLY);
+// 	fd3 = open("test3.txt", O_RDONLY);
+// 	while (i < 5)
+// 	{
+// 		line = get_next_line(fd1);
+// 		printf("Fd 1, ligne %d: %s\n", i + 1, line);
+// 		free(line);
+// 		line = get_next_line(fd2);
+// 		printf("Fd 2, ligne %d: %s\n", i + 1, line);
+// 		free(line);
+// 		line = get_next_line(fd3);
+// 		printf("Fd 3, ligne %d: %s\n", i + 1, line);
+// 		free(line);
+// 		i++;
+// 	}
+// 	close(fd1);
+// 	close(fd2);
+// 	close(fd3);
+// 	return (0);
 // }
