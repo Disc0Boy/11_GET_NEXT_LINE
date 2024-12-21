@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agenisse <agenisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:14:46 by agenisse          #+#    #+#             */
-/*   Updated: 2024/12/21 17:21:48 by agenisse         ###   ########.fr       */
+/*   Updated: 2024/12/21 17:20:47 by agenisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_get_line(char *save)
 {
@@ -97,26 +97,26 @@ static char	*ft_read_and_save(int fd, char *save)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*save;
+	static char	*save[4096];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
-		if (save)
-			free(save);
-		save = NULL;
+		if (save[fd])
+			free(save[fd]);
+		save[fd] = NULL;
 		return (NULL);
 	}
-	save = ft_read_and_save(fd, save);
-	if (!save)
+	save[fd] = ft_read_and_save(fd, save[fd]);
+	if (!save[fd])
 		return (NULL);
-	line = ft_get_line(save);
+	line = ft_get_line(save[fd]);
 	if (!line)
 	{
-		free(save);
-		save = NULL;
+		free(save[fd]);
+		save[fd] = NULL;
 		return (NULL);
 	}
-	save = ft_save(save);
+	save[fd] = ft_save(save[fd]);
 	return (line);
 }
 
